@@ -1,10 +1,25 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { auth } from "@/app/(auth)/auth";
 import { Button } from "@/components/ui/button";
 import { getAllUsers } from "@/lib/db/queries";
 import { approveUser, banUser } from "./actions";
 
-export default async function AdminPage() {
+export default function AdminPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-3xl px-4 py-8 text-sm text-muted-foreground">
+          Loading...
+        </div>
+      }
+    >
+      <AdminContent />
+    </Suspense>
+  );
+}
+
+async function AdminContent() {
   const session = await auth();
 
   if (session?.user?.role !== "admin") {
