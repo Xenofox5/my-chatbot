@@ -37,7 +37,7 @@ async function AdminContent() {
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left text-muted-foreground">
             <tr>
-              <th className="px-4 py-2 font-medium">Email</th>
+              <th className="px-4 py-2 font-medium">Username</th>
               <th className="px-4 py-2 font-medium">Role</th>
               <th className="px-4 py-2 font-medium">Status</th>
               <th className="px-4 py-2 font-medium">Actions</th>

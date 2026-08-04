@@ -77,9 +77,9 @@ export const {
   providers: [
     Credentials({
       async authorize(credentials) {
-        const email = String(credentials.email ?? "");
+        const username = String(credentials.username ?? "");
         const password = String(credentials.password ?? "");
-        const users = await getUser(email);
+        const users = await getUser(username);
 
         if (users.length === 0) {
           await compare(password, DUMMY_PASSWORD);
@@ -102,8 +102,8 @@ export const {
         return { ...user, type: "regular" };
       },
       credentials: {
-        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        username: { label: "Username", type: "text" },
       },
     }),
   ],
