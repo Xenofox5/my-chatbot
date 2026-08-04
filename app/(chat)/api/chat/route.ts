@@ -202,7 +202,10 @@ export async function POST(request: Request) {
 
     const stream = createUIMessageStream({
       execute: async ({ writer: dataStream }) => {
-        const modelName = modelConfig?.name ?? chatModel;
+        const modelName = isAdmin
+          ? (modelConfig?.name ?? chatModel)
+          : "Assistant";
+        const modelId = isAdmin ? chatModel : "assistant";
         let hasModelActivity = false;
         let healthCheckTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -222,7 +225,7 @@ export async function POST(request: Request) {
           dataStream.write({
             data: {
               message: messageText,
-              modelId: chatModel,
+              modelId,
               modelName,
               phase,
             },

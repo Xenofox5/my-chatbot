@@ -28,7 +28,10 @@ export function AccessGate({ status }: { status: UserStatus }) {
     return null;
   }
 
-  const { title, body } = COPY[status];
+  const { title, body } = COPY[status] ?? {
+    body: "Please sign out and sign back in.",
+    title: "Account status unavailable",
+  };
 
   return (
     <div className="flex h-dvh w-full flex-col items-center justify-center gap-4 px-4 text-center">
