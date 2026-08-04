@@ -36,15 +36,13 @@
 
 ## Model Providers
 
-This template uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) to access multiple AI models through a unified interface. Models are configured in `lib/ai/models.ts` with per-model provider routing. Included models: Mistral, Moonshot, DeepSeek, OpenAI, and xAI.
+This app uses [Groq](https://console.groq.com) directly via the [AI SDK](https://ai-sdk.dev/docs/introduction), rather than the Vercel AI Gateway, to take advantage of Groq's free tier. Models are configured in `lib/ai/models.ts`: `llama-3.3-70b-versatile` (default, fast general-purpose) and `meta-llama/llama-4-scout-17b-16e-instruct` (vision, for uploaded images).
 
-### AI Gateway Authentication
+### Groq Authentication
 
-**For Vercel deployments**: Authentication is handled automatically via OIDC tokens.
+Set the `GROQ_API_KEY` environment variable (get a free key with no card required at [console.groq.com/keys](https://console.groq.com/keys)).
 
-**For non-Vercel deployments**: You need to provide an AI Gateway API key by setting the `AI_GATEWAY_API_KEY` environment variable in your `.env.local` file.
-
-With the [AI SDK](https://ai-sdk.dev/docs/introduction), you can also switch to direct LLM providers like [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://ai-sdk.dev/providers/ai-sdk-providers) with just a few lines of code.
+You can switch to other providers like [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), or [many more](https://ai-sdk.dev/providers/ai-sdk-providers) by editing `lib/ai/providers.ts`.
 
 ## Deploy Your Own
 
