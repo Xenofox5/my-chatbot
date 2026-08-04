@@ -17,7 +17,6 @@ import postgres from "postgres";
 import type { ArtifactKind } from "@/components/chat/artifact";
 import type { VisibilityType } from "@/components/chat/visibility-selector";
 import { ChatbotError } from "../errors";
-import { generateUUID } from "../utils";
 import {
   type Chat,
   chat,
@@ -44,29 +43,55 @@ export async function getUser(email: string): Promise<User[]> {
   }
 }
 
+export async function getUserById(id: string): Promise<User[]> {
+  try {
+    return await db.select().from(user).where(eq(user.id, id));
+  } catch (error) {
+    throw new ChatbotError("bad_request:database", { cause: error });
+  }
+}
+
+export async function getAllUsers(): Promise<User[]> {
+  try {
+    return await db.select().from(user).orderBy(asc(user.createdAt));
+  } catch (error) {
+    throw new ChatbotError("bad_request:database", { cause: error });
+  }
+}
+
+export async function updateUserStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: "pending" | "approved" | "banned";
+}) {
+  try {
+    return await db.update(user).set({ status }).where(eq(user.id, id));
+  } catch (error) {
+    throw new ChatbotError("bad_request:database", { cause: error });
+  }
+}
+
 export async function createUser(email: string, password: string) {
   const hashedPassword = generateHashedPassword(password);
 
   try {
-    return await db.insert(user).values({ email, password: hashedPassword });
+    const [{ userCount }] = await db
+      .select({ userCount: count(user.id) })
+      .from(user);
+    const isFirstUser = userCount === 0;
+
+    return await db.insert(user).values({
+      email,
+      password: hashedPassword,
+      role: isFirstUser ? "admin" : "user",
+      status: isFirstUser ? "approved" : "pending",
+    });
   } catch (error) {
     throw new ChatbotError("bad_request:database", {
       cause: error,
     });
-  }
-}
-
-export async function createGuestUser() {
-  const email = `guest-${Date.now()}`;
-  const password = generateHashedPassword(generateUUID());
-
-  try {
-    return await db.insert(user).values({ email, password }).returning({
-      email: user.email,
-      id: user.id,
-    });
-  } catch (error) {
-    throw new ChatbotError("bad_request:database", { cause: error });
   }
 }
 

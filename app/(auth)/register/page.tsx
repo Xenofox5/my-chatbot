@@ -33,7 +33,11 @@ export default function Page() {
         type: "error",
       });
     } else if (state.status === "success") {
-      toast({ description: "Account created!", type: "success" });
+      toast({
+        description:
+          "Account created! An admin needs to approve your account before you can chat.",
+        type: "success",
+      });
       setIsSuccessful(true);
       updateSession();
       router.refresh();

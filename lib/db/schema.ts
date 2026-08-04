@@ -20,6 +20,12 @@ export const user = pgTable("User", {
   isAnonymous: boolean("isAnonymous").notNull().default(false),
   name: text("name"),
   password: varchar("password", { length: 64 }),
+  role: varchar("role", { enum: ["admin", "user"] })
+    .notNull()
+    .default("user"),
+  status: varchar("status", { enum: ["pending", "approved", "banned"] })
+    .notNull()
+    .default("pending"),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 

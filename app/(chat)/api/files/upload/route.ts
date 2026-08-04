@@ -22,6 +22,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (session.user.status !== "approved") {
+    return NextResponse.json(
+      { error: "Account not approved" },
+      { status: 403 }
+    );
+  }
+
   if (request.body === null) {
     return new Response("Request body is empty", { status: 400 });
   }

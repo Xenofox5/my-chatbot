@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import Script from "next/script";
 import { Suspense } from "react";
 import { Toaster } from "sonner";
+import { AccessGate } from "@/components/chat/access-gate";
 import { AppSidebar } from "@/components/chat/app-sidebar";
 import { DataStreamProvider } from "@/components/chat/data-stream-provider";
 import { ChatShell } from "@/components/chat/shell";
@@ -28,6 +29,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 async function SidebarShell({ children }: { children: React.ReactNode }) {
   const [session, cookieStore] = await Promise.all([auth(), cookies()]);
   const isCollapsed = cookieStore.get("sidebar_state")?.value !== "true";
+
+  if (session?.user && session.user.status !== "approved") {
+    return <AccessGate status={session.user.status} />;
+  }
 
   return (
     <SidebarProvider defaultOpen={!isCollapsed}>

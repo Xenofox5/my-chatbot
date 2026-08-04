@@ -3,15 +3,20 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import type { DefaultJWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { DUMMY_PASSWORD } from "@/lib/constants";
-import { createGuestUser, getUser } from "@/lib/db/queries";
+import { getUser, getUserById } from "@/lib/db/queries";
+import type { User as DbUser } from "@/lib/db/schema";
 import { authConfig } from "./auth.config";
 
-export type UserType = "guest" | "regular";
+export type UserType = "regular";
+export type UserRole = DbUser["role"];
+export type UserStatus = DbUser["status"];
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      role: UserRole;
+      status: UserStatus;
       type: UserType;
     } & DefaultSession["user"];
   }
@@ -19,6 +24,8 @@ declare module "next-auth" {
   interface User {
     email?: string | null;
     id?: string;
+    role?: UserRole;
+    status?: UserStatus;
     type: UserType;
   }
 }
@@ -26,6 +33,8 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
     id: string;
+    role: UserRole;
+    status: UserStatus;
     type: UserType;
   }
 }
@@ -38,10 +47,18 @@ export const {
 } = NextAuth({
   ...authConfig,
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id as string;
         token.type = user.type;
+      }
+
+      if (token.id) {
+        const [dbUser] = await getUserById(token.id);
+        if (dbUser) {
+          token.role = dbUser.role;
+          token.status = dbUser.status;
+        }
       }
 
       return token;
@@ -50,6 +67,8 @@ export const {
       if (session.user) {
         session.user.id = token.id;
         session.user.type = token.type;
+        session.user.role = token.role;
+        session.user.status = token.status;
       }
 
       return session;
@@ -86,14 +105,6 @@ export const {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-    }),
-    Credentials({
-      async authorize() {
-        const [guestUser] = await createGuestUser();
-        return { ...guestUser, type: "guest" };
-      },
-      credentials: {},
-      id: "guest",
     }),
   ],
 });

@@ -16,13 +16,15 @@ export type Surface =
   | "vote"
   | "document"
   | "suggestions"
-  | "activate_gateway";
+  | "activate_gateway"
+  | "account";
 
 export type ErrorCode = `${ErrorType}:${Surface}`;
 
 export type ErrorVisibility = "response" | "log" | "none";
 
 export const visibilityBySurface: Record<Surface, ErrorVisibility> = {
+  account: "response",
   activate_gateway: "response",
   api: "response",
   auth: "response",
@@ -95,6 +97,9 @@ export function getMessageByErrorCode(errorCode: ErrorCode): string {
       return "You need to sign in before continuing.";
     case "forbidden:auth":
       return "Your account does not have access to this feature.";
+
+    case "forbidden:account":
+      return "Your account is pending approval or has been blocked from accessing this chatbot.";
 
     case "rate_limit:chat":
       return "You've reached the message limit. Come back in 1 hour to continue chatting.";

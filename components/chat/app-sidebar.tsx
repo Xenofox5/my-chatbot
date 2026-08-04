@@ -4,6 +4,7 @@ import {
   MessageSquareIcon,
   PanelLeftIcon,
   PenSquareIcon,
+  ShieldIcon,
   TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -140,6 +141,21 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                     >
                       <TrashIcon className="size-4" />
                       <span className="text-[13px]">Delete all</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ) : null}
+                {user?.role === "admin" ? (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      className="rounded-lg text-sidebar-foreground/70 transition-colors duration-150 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                      onClick={closeMobile}
+                      tooltip="Admin"
+                    >
+                      <Link href="/admin">
+                        <ShieldIcon className="size-4" />
+                        <span className="text-[13px]">Admin</span>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ) : null}

@@ -1,4 +1,4 @@
-export const DEFAULT_CHAT_MODEL = "llama-3.3-70b-versatile";
+export const DEFAULT_CHAT_MODEL = "qwen/qwen3.6-27b";
 
 export const titleModel = {
   description: "Fast small model for title generation",
