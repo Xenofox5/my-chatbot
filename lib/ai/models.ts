@@ -31,10 +31,10 @@ export const chatModels: ChatModel[] = [
     provider: "groq",
   },
   {
-    capabilities: { reasoning: false, tools: true, vision: true },
+    capabilities: { reasoning: true, tools: true, vision: true },
     description: "Understands uploaded images, good for vision tasks",
-    id: "meta-llama/llama-4-scout-17b-16e-instruct",
-    name: "Llama 4 Scout (Vision)",
+    id: "qwen/qwen3.6-27b",
+    name: "Qwen3.6 27B (Vision)",
     provider: "groq",
   },
 ];

@@ -36,7 +36,7 @@
 
 ## Model Providers
 
-This app uses [Groq](https://console.groq.com) directly via the [AI SDK](https://ai-sdk.dev/docs/introduction), rather than the Vercel AI Gateway, to take advantage of Groq's free tier. Models are configured in `lib/ai/models.ts`: `llama-3.3-70b-versatile` (default, fast general-purpose) and `meta-llama/llama-4-scout-17b-16e-instruct` (vision, for uploaded images).
+This app uses [Groq](https://console.groq.com) directly via the [AI SDK](https://ai-sdk.dev/docs/introduction), rather than the Vercel AI Gateway, to take advantage of Groq's free tier. Models are configured in `lib/ai/models.ts`: `llama-3.3-70b-versatile` (default, fast general-purpose) and `qwen/qwen3.6-27b` (vision, for uploaded images).
 
 ### Groq Authentication
 
