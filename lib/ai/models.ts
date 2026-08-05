@@ -1,4 +1,9 @@
-export const DEFAULT_CHAT_MODEL = "qwen/qwen3.6-27b";
+export const DEFAULT_CHAT_MODEL = "llama-3.3-70b-versatile";
+
+// Reasoning model used automatically only when a conversation includes an
+// image attachment. It's slower and occasionally produces long reasoning
+// traces, so it's kept out of the default path for smoother, faster replies.
+export const VISION_CHAT_MODEL = "qwen/qwen3.6-27b";
 
 export const titleModel = {
   description: "Fast small model for title generation",

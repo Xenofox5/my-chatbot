@@ -18,6 +18,7 @@ import {
   DEFAULT_CHAT_MODEL,
   getCapabilities,
   getModelAvailability,
+  VISION_CHAT_MODEL,
 } from "@/lib/ai/models";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { getLanguageModel } from "@/lib/ai/providers";
@@ -91,10 +92,6 @@ export async function POST(request: Request) {
     }
 
     const isAdmin = session.user.role === "admin";
-    const chatModel =
-      isAdmin && allowedModelIds.has(selectedChatModel)
-        ? selectedChatModel
-        : DEFAULT_CHAT_MODEL;
 
     await checkIpRateLimit(ipAddress(request));
 
@@ -192,6 +189,24 @@ export async function POST(request: Request) {
       });
     }
 
+    const conversationHasImage = uiMessages.some((m) =>
+      m.parts?.some(
+        (p) =>
+          "type" in p &&
+          p.type === "file" &&
+          "mediaType" in p &&
+          typeof p.mediaType === "string" &&
+          p.mediaType.startsWith("image/")
+      )
+    );
+    const autoModel = conversationHasImage
+      ? VISION_CHAT_MODEL
+      : DEFAULT_CHAT_MODEL;
+    const chatModel =
+      isAdmin && allowedModelIds.has(selectedChatModel)
+        ? selectedChatModel
+        : autoModel;
+
     const modelConfig = chatModels.find((m) => m.id === chatModel);
     const modelCapabilities = await getCapabilities();
     const capabilities = modelCapabilities[chatModel];
@@ -279,6 +294,7 @@ export async function POST(request: Request) {
                   "requestSuggestions",
                 ],
           instructions: systemPrompt({ requestHints, supportsTools }),
+          maxOutputTokens: 4096,
           messages: modelMessages,
           model: getLanguageModel(chatModel),
           onAbort() {
